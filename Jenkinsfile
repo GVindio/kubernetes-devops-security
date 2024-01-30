@@ -21,18 +21,6 @@ pipeline {
             }
         }
 
-        // Commenting out the Mutation Tests - PIT stage
-        // stage('Mutation Tests - PIT') {
-        //     steps {
-        //         sh "mvn org.pitest:pitest-maven:mutationCoverage"
-        //     }
-        //     post {
-        //         always {
-        //             pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
-        //         }
-        //     }
-        // }
-
         stage('Docker Build and Push') {
             steps {
                 withDockerRegistry([credentialsId: "docker", url: ""]) {
@@ -42,14 +30,16 @@ pipeline {
                 }
             }
         }
-
-        stage('Kubernetes Deployment - DEV') {
-            steps {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh "sed -i 's#replace#gvindio/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
-                    sh "kubectl apply -f k8s_deployment_service.yaml"
-                }
-            }
+      stage('Kubernetes Deployment - DEV') {
+          steps {
+              withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "sed -i 's#replace#gvindio/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
+              sh "kubectl apply -f k8s_deployment_service.yaml"
         }
+      }
     }
+          
+  }
+
 }
+
