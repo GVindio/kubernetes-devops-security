@@ -24,7 +24,7 @@ pipeline {
 
     stage('Docker Build and Push') {
       steps {
-          withDockerRegistry([gvindio: "docker-hub", url: ""]) {
+          withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
           sh 'printenv'
           sh 'docker build -t gvindio/numeric-app:""$GIT_COMMIT"" .'
           sh 'docker push gvindio/numeric-app:""$GIT_COMMIT""'
